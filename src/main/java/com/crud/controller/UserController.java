@@ -1,6 +1,7 @@
 package com.crud.controller;
 
 import com.crud.entity.User;
+import com.crud.model.UserDTO;
 import com.crud.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
+    public UserDTO getUserById(@PathVariable int id) {
         return userService.getUserById(id);
     }
 
     @GetMapping("/get")
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 

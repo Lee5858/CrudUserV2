@@ -2,6 +2,7 @@ package com.crud.service;
 
 
 import com.crud.entity.User;
+import com.crud.model.UserDTO;
 import com.crud.repository.UserRepo;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -26,11 +28,17 @@ public class UserService {
         user.setPassword((encodedPassword));
         return userRepo.save(user);
     }
-    public User getUserById(int id){
-        return userRepo.findById(id).orElse(null);
+    public UserDTO getUserById(int id){
+        return (UserDTO) userRepo.findById(id)
+                .stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
-    public List<User> getAllUsers(){
-        return userRepo.findAll();
+    public List<UserDTO> getAllUsers(){
+        return userRepo.findAll()
+                .stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     public User updateUser(User user){
@@ -52,6 +60,15 @@ public class UserService {
     public String delUserById(int id){
         userRepo.deleteById(id);
         return "User Deleted!!!";
+    }
+
+    private UserDTO convertEntityToDTO(User user){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(user.getId());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAge(user.getAge());
+        userDTO.setName(user.getName());
+        return userDTO;
     }
 
 }
