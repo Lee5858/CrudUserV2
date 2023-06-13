@@ -4,6 +4,7 @@ package com.crud.service;
 import com.crud.entity.User;
 import com.crud.model.UserDTO;
 import com.crud.repository.UserRepo;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
 public class UserService {
 
    private UserRepo userRepo;
+   private ModelMapper modelMapper;
    PasswordEncoder passwordEncoder;
 
     public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.modelMapper = new ModelMapper();
     }
 
     public User createUser(User user){
@@ -61,13 +64,20 @@ public class UserService {
         userRepo.deleteById(id);
         return "User Deleted!!!";
     }
+//    Converting DAO to DTO manually
+//    private UserDTO convertEntityToDTO(User user){
+//        UserDTO userDTO = new UserDTO();
+//        userDTO.setUserId(user.getId());
+//        userDTO.setEmail(user.getEmail());
+//        userDTO.setAge(user.getAge());
+//        userDTO.setName(user.getName());
+//        return userDTO;
+//    }
 
+    //Converting DAO to DTO with the use of the model mapper dependency
     private UserDTO convertEntityToDTO(User user){
         UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(user.getId());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setAge(user.getAge());
-        userDTO.setName(user.getName());
+        userDTO = modelMapper.map(user, UserDTO.class);
         return userDTO;
     }
 
